@@ -83,45 +83,7 @@ class CodeFingerprint:
     """
     def __init__(self, file, k, win_size, boilerplate=None, filter=True,
                  language=None, fp=None, encoding: str = "utf-8"):
-        if boilerplate is None:
-            boilerplate = []
-        if fp is not None:
-            code = fp.read()
-        elif encoding == "DETECT":
-            try:
-                import chardet
-                with open(file, "rb") as code_fp:
-                    code = code_fp.read()
-                detected_encoding = chardet.detect(code)["encoding"]
-                if detected_encoding is not None:
-                    code = code.decode(detected_encoding)
-                else:
-                    # if encoding can't be detected, just use the default
-                    # encoding (the file may be empty)
-                    code = code.decode()
-            except ModuleNotFoundError as e:
-                logging.error(
-                    "encoding detection requires chardet to be installed"
-                )
-                raise e
-        else:
-            with open(file, encoding=encoding) as code_fp:
-                code = code_fp.read()
-        if filter:
-            filtered_code, offsets = filter_code(code, file, language)
-        else:
-            filtered_code, offsets = code, np.array([])
-        hashes, idx = get_document_fingerprints(filtered_code, k, win_size,
-                                                boilerplate)
-
-        self.filename = file
-        self.raw_code = code
-        self.filtered_code = filtered_code
-        self.offsets = offsets
-        self.hashes = hashes
-        self.hash_idx = idx
-        self.k = k
-        self.token_coverage = get_token_coverage(idx, k, len(filtered_code))
+        pass
 
 def compare_files(file1_data, file2_data):
     """Computes the overlap between two CodeFingerprint objects
@@ -256,29 +218,7 @@ class CopyDetector:
                  disable_filtering=False, force_language=None,
                  truncate=False, out_file="./report.html", css_files=None,
                  silent=False, encoding: str = "utf-8"):
-        conf_args = locals()
-        conf_args = {
-            key: val
-            for key, val in conf_args.items()
-            if key != "self" and val is not None
-        }
-        self.conf = CopydetectConfig(**conf_args)
-
-        self.test_files = self._get_file_list(
-            self.conf.test_dirs, self.conf.extensions
-        )
-        self.ref_files = self._get_file_list(
-            self.conf.ref_dirs, self.conf.extensions
-        )
-        self.boilerplate_files = self._get_file_list(
-            self.conf.boilerplate_dirs, self.conf.extensions
-        )
-
-        # before run() is called, similarity data should be empty
-        self.similarity_matrix = np.array([])
-        self.token_overlap_matrix = np.array([])
-        self.slice_matrix = {}
-        self.file_data = {}
+        pass
 
     @classmethod
     def from_config(cls, config):
@@ -303,24 +243,7 @@ class CopyDetector:
         directories. Used to search test_dirs, ref_dirs, and
         boilerplate_dirs
         """
-        file_list = []
-        for dir in dirs:
-            print_warning = True
-            for ext in exts:
-                if ext == "*":
-                    matched_contents = Path(dir).rglob("*")
-                else:
-                    matched_contents = Path(dir).rglob("*."+ext.lstrip("."))
-                files = [str(f) for f in matched_contents if f.is_file()]
-
-                if len(files) > 0:
-                    print_warning = False
-                file_list.extend(files)
-            if print_warning:
-                logging.warning("No files found in " + dir)
-
-        # convert to a set to remove duplicates, then back to a list
-        return list(set(file_list))
+        pass
 
     def add_file(self, filename, type="testref"):
         """Adds a file to the list of test files, reference files, or
@@ -334,15 +257,7 @@ class CopyDetector:
             Type of file to add. "testref" will add the file as both a
             test and reference file.
         """
-        if type == "testref":
-            self.test_files.append(filename)
-            self.ref_files.append(filename)
-        elif type == "test":
-            self.test_files.append(filename)
-        elif type == "ref":
-            self.ref_files.append(filename)
-        elif type == "boilerplate":
-            self.boilerplate_files.append(filename)
+        pass
 
     def _get_boilerplate_hashes(self):
         """Generates a list of hashes of the boilerplate text. Returns

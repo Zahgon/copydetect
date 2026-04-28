@@ -42,66 +42,14 @@ class CopydetectConfig:
 
     def _check_arguments(self):
         """Checks type/value of all parameters"""
-        if not isinstance(self.test_dirs, list):
-            raise TypeError("Test directories must be a list")
-        if not isinstance(self.ref_dirs, list):
-            raise TypeError("Reference directories must be a list")
-        if not isinstance(self.extensions, list):
-            raise TypeError("extensions must be a list")
-        if not isinstance(self.boilerplate_dirs, list):
-            raise TypeError("Boilerplate directories must be a list")
-        if not isinstance(self.same_name_only, bool):
-            raise TypeError("same_name_only must be true or false")
-        if not isinstance(self.ignore_leaf, bool):
-            raise TypeError("ignore_leaf must be true or false")
-        if not isinstance(self.disable_filtering, bool):
-            raise TypeError("disable_filtering must be true or false")
-        if not isinstance(self.autoopen, bool):
-            raise TypeError("disable_autoopen must be true or false")
-        if self.force_language is not None:
-            if not isinstance(self.force_language, str):
-                raise TypeError("force_language must be a string")
-        if not isinstance(self.truncate, bool):
-            raise TypeError("truncate must be true or false")
-        if not isinstance(self.noise_t, int):
-            if int(self.noise_t) == self.noise_t:
-                self.noise_t = int(self.noise_t)
-                self.window_size = int(self.window_size)
-            else:
-                raise TypeError("Noise threshold must be an integer")
-        if not isinstance(self.guarantee_t, int):
-            if int(self.guarantee_t) == self.guarantee_t:
-                self.guarantee_t = int(self.guarantee_t)
-                self.window_size = int(self.window_size)
-            else:
-                raise TypeError("Guarantee threshold must be an integer")
-        if not isinstance(self.css_files, list):
-            raise TypeError("Linked CSS entries must be a list")
-        
-        # value checking
-        if self.guarantee_t < self.noise_t:
-            raise ValueError(
-                "Guarantee threshold must be greater than or "
-                "equal to noise threshold"
-            )
-        if self.display_t > 1 or self.display_t < 0:
-            raise ValueError("Display threshold must be between 0 and 1")
-        if not Path(self.out_file).parent.exists():
-            raise ValueError(
-                "Invalid output file path (directory does not exist)"
-            )
+        pass
 
     @staticmethod
     def normalize_outfile(file_path: str) -> str:
         """Ensures that the outfile has an html suffix. If the provided
         out file is a directory, append report.html to the path.
         """
-        out_path = Path(file_path)
-        if out_path.is_dir():
-            file_path += "/report.html"
-        elif out_path.suffix != ".html":
-            file_path = str(out_path) + ".html"
-        return str(file_path)
+        pass
 
     def to_json(self) -> dict:
         """Converts the parameters of this configuration to the JSON
@@ -135,8 +83,4 @@ class CopydetectConfig:
         """Sets reference directories to test directories if needed and
         performs argument checking.
         """
-        if len(self.ref_dirs) == 0:
-            self.ref_dirs = self.test_dirs
-        self.out_file = self.normalize_outfile(self.out_file)
-        self.window_size = self.guarantee_t - self.noise_t + 1
-        self._check_arguments()
+        pass
